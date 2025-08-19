@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Twoja Językowa Bestie — Internacjonalizmy • Fiszki & Quiz</title>
+  <style>
+    :root{
+      --bg:#181a1f; --panel:#22252c; --card:#2b2f39; --ink:#f2f3f5; --muted:#9aa0ad;
+      --accent:#f59f00; --accent2:#4dabf7; --ok:#2ecc71; --bad:#ff4757; --shadow:0 10px 30px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit}
+
+    .app{display:flex;min-height:100vh}
+    .side{width:260px;background:#4a2424;padding:18px 14px;position:sticky;top:0;align-self:flex-start;height:100vh}
+    .brand{font-size:26px;font-weight:800;letter-spacing:.3px;margin:4px 8px 16px}
+    .slogan{font-size:13px;color:#ffd9d9;margin:0 8px 18px}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav button{display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--ink);padding:12px 14px;border-radius:12px;cursor:pointer}
+    .nav button.active,.nav button:hover{background:rgba(255,255,255,.08)}
+
+    .main{flex:1;padding:22px;max-width:1100px;margin:0 auto}
+    .hero{display:flex;gap:18px;align-items:center;background:var(--panel);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+    .hero img{width:92px;height:92px;border-radius:16px;background:#5b5b5b}
+
+    h1{font-size:34px;margin:8px 0 6px}
+    h2{font-size:24px;margin:20px 0 10px}
+    h3{font-size:18px;margin:10px 0}
+    .muted{color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    .deck{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+    .deck .name{font-weight:800;font-size:18px;margin-bottom:6px}
+    .deck .meta{font-size:13px;color:var(--muted)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--accent2);color:#10141b}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--ink)}
+
+    .panel{background:var(--panel);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:8px 12px;font-size:12px;color:var(--muted)}
+    input,textarea,select{width:100%;background:#21242b;border:1px solid rgba(255,255,255,.15);color:var(--ink);padding:10px 12px;border-radius:12px}
+
+    .flashcard{min-height:190px;background:linear-gradient(145deg,var(--card),#323544);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;letter-spacing:.3px;box-shadow:var(--shadow);padding:24px;text-align:center}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn.ok{background:var(--ok);color:#062a11}
+    .btn.bad{background:var(--bad)}
+    .bar{height:8px;background:#1b1e25;border-radius:999px;overflow:hidden}
+    .bar>span{display:block;height:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%}
+
+    .footer{margin:26px 0;color:var(--muted);font-size:12px}
+    @media (max-width:860px){.side{display:none}.main{padding:16px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">🐾 Twoja Językowa Bestie</div>
+      <p class="slogan">Twoja przyjaciółka od języków — miejsce, gdzie czujesz się dobrze.</p>
+      <div class="nav">
+        <button data-view="home" class="active">🏠 Start</button>
+        <button data-view="learn">📚 Ucz się</button>
+        <button data-view="quiz">🎯 Quiz</button>
+        <button data-view="add">➕ Dodaj</button>
+        <button data-view="progress">📈 Postęp</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- HOME -->
+      <section id="view-home">
+        <div class="hero">
+          <img alt="Ilustracja" />
+          <div>
+            <h1>Internacjonalizmy: polski ⇄ niemiecki</h1>
+            <div class="muted">Zestawy startowe: min. 20 czasowników, rzeczowników, przymiotników i przysłówków + przydatne zwroty. Wszystko działa offline i za darmo.</div>
+          </div>
+        </div>
+        <h2>Wybierz kategorię</h2>
+        <div id="deck-list" class="grid"></div>
+      </section>
+
+      <!-- LEARN -->
+      <section id="view-learn" style="display:none">
+        <div class="panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <h2 id="learn-deck-name">Sesja nauki</h2>
+              <div class="muted">Tryb fiszek z prostym planem powtórek (Leitner 0/1/3/7/21 dni). Kliknij 🔊 aby odsłuchać niemiecką wymowę.</div>
+            </div>
+            <div class="pill">🔁 Do powtórki: <b id="due-count">0</b></div>
+          </div>
+          <div class="bar" style="margin:10px 0 18px"><span id="session-progress"></span></div>
+          <div class="flashcard" id="flashcard">—</div>
+          <div class="actions">
+            <button class="btn ghost" id="btn-flip">🔁 Odwróć</button>
+            <button class="btn" id="btn-tts">🔊 Wymowa (DE)</button>
+            <button class="btn bad" id="btn-bad">Nie wiem</button>
+            <button class="btn ok" id="btn-ok">Wiem</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="view-quiz" style="display:none">
+        <div class="panel">
+          <h2>Quiz — wybierz poprawne tłumaczenie</h2>
+          <p id="quiz-q" style="font-size:20px;margin:6px 0 10px"></p>
+          <div id="quiz-answers" class="row"></div>
+          <p id="quiz-result" class="muted"></p>
+          <div class="row">
+            <button class="btn" id="quiz-next">Następne pytanie</button>
+            <button class="btn ghost" id="quiz-exit">Zakończ quiz</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADD -->
+      <section id="view-add" style="display:none">
+        <h2>Dodaj nowe pojęcia lub kategorię</h2>
+        <div class="panel">
+          <label>Wybierz lub wpisz nową kategorię</label>
+          <div class="row">
+            <select id="add-category"></select>
+            <input id="add-new-cat" placeholder="albo wpisz nową nazwę (np. Medycyna)" />
+          </div>
+          <div style="height:10px"></div>
+          <label>Wklej pary w formacie <b>PL;DE</b> — jedna para na linię</label>
+          <textarea id="add-raw" rows="8" placeholder="analiza;Analyse\nprojekt;Projekt\n..."></textarea>
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" id="btn-add">Dodaj</button>
+            <button class="btn ghost" id="btn-export">Eksportuj wszystkie (JSON)</button>
+            <input type="file" id="file-import" accept="application/json" style="display:none" />
+            <button class="btn" id="btn-import">Importuj JSON</button>
+          </div>
+          <p class="muted" style="margin-top:12px">Podpowiedź: po publikacji na GitHub Pages wystarczy podmienić ten plik <code>index.html</code> albo zaimportować nowy <code>.json</code> z zestawami — strona odświeży się sama.</p>
+        </div>
+      </section>
+
+      <!-- PROGRESS -->
+      <section id="view-progress" style="display:none">
+        <h2>Postęp</h2>
+        <div class="panel">
+          <div class="row">
+            <div class="pill">📦 Pudełko 0: <b id="c0">0</b></div>
+            <div class="pill">📦 1: <b id="c1">0</b></div>
+            <div class="pill">📦 2: <b id="c2">0</b></div>
+            <div class="pill">📦 3: <b id="c3">0</b></div>
+            <div class="pill">📦 4: <b id="c4">0</b></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn ghost" id="reset-progress">Resetuj postęp</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">© 2025 Twoja Językowa Bestie • Działa offline • Możesz hostować na GitHub Pages/Netlify • Wymowa: Web Speech API</div>
+    </main>
+  </div>
+
+  <script>
+    // === ZESTAWY STARTOWE: INTERNACJONALIZMY ===
+    const decksDefault = [
+      {
+        id:"czasowniki", name:"Czasowniki (internacjonalizmy)", desc:"24 pojęcia", cards:[
+          {pl:"analizować", de:"analysieren"},
+          {pl:"organizować", de:"organisieren"},
+          {pl:"informować", de:"informieren"},
+          {pl:"kontrolować", de:"kontrollieren"},
+          {pl:"telefonować", de:"telefonieren"},
+          {pl:"protestować", de:"protestieren"},
+          {pl:"studiować", de:"studieren"},
+          {pl:"produkować", de:"produzieren"},
+          {pl:"kopiować", de:"kopieren"},
+          {pl:"konstruować", de:"konstruieren"},
+          {pl:"dyskutować", de:"diskutieren"},
+          {pl:"aktualizować", de:"aktualisieren"},
+          {pl:"modernizować", de:"modernisieren"},
+          {pl:"kalkulować", de:"kalkulieren"},
+          {pl:"reagować", de:"reagieren"},
+          {pl:"regulować", de:"regulieren"},
+          {pl:"redukować", de:"reduzieren"},
+          {pl:"bazować", de:"basieren"},
+          {pl:"importować", de:"importieren"},
+          {pl:"eksportować", de:"exportieren"},
+          {pl:"rezerwować", de:"reservieren"},
+          {pl:"prezentować", de:"präsentieren"},
+          {pl:"dokumentować", de:"dokumentieren"},
+          {pl:"interesować się", de:"sich interessieren"}
+        ]
+      },
+      {
+        id:"rzeczowniki", name:"Rzeczowniki (internacjonalizmy)", desc:"26 pojęć", cards:[
+          {pl:"informacja", de:"Information"},
+          {pl:"organizacja", de:"Organisation"},
+          {pl:"sytuacja", de:"Situation"},
+          {pl:"kultura", de:"Kultur"},
+          {pl:"problem", de:"Problem"},
+          {pl:"idea", de:"Idee"},
+          {pl:"numer", de:"Nummer"},
+          {pl:"profesor", de:"Professor"},
+          {pl:"student", de:"Student"},
+          {pl:"telefon", de:"Telefon"},
+          {pl:"komputer", de:"Computer"},
+          {pl:"program", de:"Programm"},
+          {pl:"muzyka", de:"Musik"},
+          {pl:"system", de:"System"},
+          {pl:"projekt", de:"Projekt"},
+          {pl:"analiza", de:"Analyse"},
+          {pl:"metoda", de:"Methode"},
+          {pl:"teoria", de:"Theorie"},
+          {pl:"praktyka", de:"Praxis"},
+          {pl:"demokracja", de:"Demokratie"},
+          {pl:"ekonomia", de:"Ökonomie"},
+          {pl:"energia", de:"Energie"},
+          {pl:"interes", de:"Interesse"},
+          {pl:"rezerwacja", de:"Reservierung"},
+          {pl:"dokument", de:"Dokument"},
+          {pl:"prezentacja", de:"Präsentation"}
+        ]
+      },
+      {
+        id:"przymiotniki", name:"Przymiotniki (internacjonalizmy)", desc:"25 pojęć", cards:[
+          {pl:"idealny", de:"ideal"},
+          {pl:"lokalny", de:"lokal"},
+          {pl:"globalny", de:"global"},
+          {pl:"normalny", de:"normal"},
+          {pl:"specjalny", de:"speziell"},
+          {pl:"oficjalny", de:"offiziell"},
+          {pl:"legalny", de:"legal"},
+          {pl:"moralny", de:"moralisch"},
+          {pl:"praktyczny", de:"praktisch"},
+          {pl:"polityczny", de:"politisch"},
+          {pl:"ekonomiczny", de:"ökonomisch"},
+          {pl:"popularny", de:"populär"},
+          {pl:"aktywny", de:"aktiv"},
+          {pl:"pasywny", de:"passiv"},
+          {pl:"dynamiczny", de:"dynamisch"},
+          {pl:"genialny", de:"genial"},
+          {pl:"klasyczny", de:"klassisch"},
+          {pl:"logiczny", de:"logisch"},
+          {pl:"krytyczny", de:"kritisch"},
+          {pl:"minimalny", de:"minimal"},
+          {pl:"maksymalny", de:"maximal"},
+          {pl:"fundamentalny", de:"fundamental"},
+          {pl:"centralny", de:"zentral"},
+          {pl:"profesjonalny", de:"professionell"},
+          {pl:"techniczny", de:"technisch"}
+        ]
+      },
+      {
+        id:"przyslowki", name:"Przysłówki (od przymiotników)", desc:"24 pojęcia", cards:[
+          {pl:"idealnie", de:"ideal"},
+          {pl:"lokalnie", de:"lokal"},
+          {pl:"globalnie", de:"global"},
+          {pl:"normalnie", de:"normal"},
+          {pl:"specjalnie", de:"speziell"},
+          {pl:"oficjalnie", de:"offiziell"},
+          {pl:"legalnie", de:"legal"},
+          {pl:"moralnie", de:"moralisch"},
+          {pl:"praktycznie", de:"praktisch"},
+          {pl:"politycznie", de:"politisch"},
+          {pl:"ekonomicznie", de:"ökonomisch"},
+          {pl:"popularnie", de:"populär"},
+          {pl:"aktywnie", de:"aktiv"},
+          {pl:"pasywnie", de:"passiv"},
+          {pl:"dynamicznie", de:"dynamisch"},
+          {pl:"genialnie", de:"genial"},
+          {pl:"klasycznie", de:"klassisch"},
+          {pl:"logicznie", de:"logisch"},
+          {pl:"krytycznie", de:"kritisch"},
+          {pl:"minimalnie", de:"minimal"},
+          {pl:"maksymalnie", de:"maximal"},
+          {pl:"profesjonalnie", de:"professionell"},
+          {pl:"technicznie", de:"technisch"},
+          {pl:"aktualnie", de:"aktuell"}
+        ]
+      },
+      {
+        id:"zwroty", name:"Przydatne zwroty (internacjonalizmy)", desc:"12 pojęć", cards:[
+          {pl:"analiza danych", de:"Datenanalyse"},
+          {pl:"projekt pilotażowy", de:"Pilotprojekt"},
+          {pl:"kontakt telefoniczny", de:"telefonischer Kontakt"},
+          {pl:"prezentacja projektu", de:"Projektpräsentation"},
+          {pl:"rezerwacja online", de:"Online-Reservierung"},
+          {pl:"dokument tożsamości", de:"Identitätsdokument"},
+          {pl:"demokracja parlamentarna", de:"parlamentarische Demokratie"},
+          {pl:"energia elektryczna", de:"elektrische Energie"},
+          {pl:"kontrola jakości", de:"Qualitätskontrolle"},
+          {pl:"system operacyjny", de:"Betriebssystem"},
+          {pl:"kultura masowa", de:"Massenkultur"},
+          {pl:"interes publiczny", de:"öffentliches Interesse"}
+        ]
+      }
+    ];
+
+    // === LOCALSTORAGE KEYS ===
+    const LS_DECKS = 'tjb2_decks';
+    const LS_PROGRESS = 'tjb2_progress';
+
+    // === LOAD/SAVE ===
+    let decks = load(LS_DECKS) || decksDefault;
+    let progress = load(LS_PROGRESS) || {}; // { deckId: { idx: {box,next} } }
+
+    function load(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null}}
+    function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+    // === RENDER HOME ===
+    const deckList = document.getElementById('deck-list');
+    function renderHome(){
+      deckList.innerHTML='';
+      decks.forEach(d=>{
+        const el=document.createElement('div'); el.className='deck';
+        el.innerHTML=`<div class="name">${escapeHtml(d.name)}</div>
+          <div class="meta">${d.cards.length} pojęć</div>
+          <div class="row">
+            <button class="btn primary" data-go-learn="${d.id}">Ucz się</button>
+            <button class="btn ghost" data-go-quiz="${d.id}">Quiz</button>
+          </div>`;
+        deckList.appendChild(el);
+      });
+      deckList.querySelectorAll('[data-go-learn]').forEach(b=>b.onclick=()=>startLearn(b.dataset.goLearn));
+      deckList.querySelectorAll('[data-go-quiz]').forEach(b=>b.onclick=()=>startQuiz(b.dataset.goQuiz));
+      populateAddSelect();
+    }
+
+    // === NAV ===
+    const views = ['home','learn','quiz','add','progress'];
+    document.querySelectorAll('.nav button').forEach(btn=>{
+      btn.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');showView(btn.dataset.view)}
+    });
+    function showView(v){views.forEach(x=>document.getElementById('view-'+x).style.display=(x===v?'block':'none')); if(v==='home')renderHome(); if(v==='progress')renderProgress();}
+
+    // === LEARNING (Leitner 0/1/3/7/21) ===
+    const schedule=[0,1,3,7,21];
+    let currentDeck=null, queue=[], qPos=0, front=true;
+    const fc=document.getElementById('flashcard'); const dueEl=document.getElementById('due-count'); const bar=document.getElementById('session-progress');
+
+    function now(){return Date.now()}
+    function startLearn(id){
+      currentDeck = decks.find(d=>d.id===id);
+      if(!progress[id]) progress[id] = {};
+      document.getElementById('learn-deck-name').textContent=currentDeck.name;
+      queue = buildDueList(id, 30); qPos=0; front=true; updateBar(); showCard(); showView('learn');
+    }
+    function buildDueList(id,limit){
+      const st=progress[id]; const arr=[]; const t=now(); const N=decks.find(d=>d.id===id).cards.length;
+      for(let i=0;i<N;i++){const p=st[i]; if(!p||!p.next||p.next<=t) arr.push(i)}
+      for(let i=0;i<N && arr.length<limit;i++) if(!(i in st)) arr.push(i);
+      return shuffle(arr).slice(0,limit)
+    }
+    function showCard(){
+      if(qPos>=queue.length){fc.textContent='🎉 Koniec sesji!'; return}
+      const pair=currentDeck.cards[queue[qPos]]; front=true; fc.textContent=pair.pl; updateBar();
+    }
+    function flip(){const pair=currentDeck.cards[queue[qPos]]; front=!front; fc.textContent = front?pair.pl:pair.de}
+    function answer(ok){
+      const id=currentDeck.id; const idx=queue[qPos]; const st=progress[id]||(progress[id]={}); const p=st[idx]||{box:0,next:0};
+      p.box = ok? Math.min(4,(p.box||0)+1):0; p.next = now()+schedule[p.box]*24*60*60*1000; st[idx]=p; progress[id]=st; save(LS_PROGRESS,progress);
+      qPos++; if(qPos<queue.length) showCard(); else {fc.textContent='🎉 Koniec sesji!'; dueEl.textContent=0;}
+      updateBar();
+    }
+    function updateBar(){const pct=Math.round((qPos/Math.max(1,queue.length))*100); bar.querySelector('span').style.width=pct+'%'; dueEl.textContent=Math.max(0,queue.length-qPos)}
+
+    document.getElementById('btn-flip').onclick=flip;
+    document.getElementById('btn-ok').onclick=()=>answer(true);
+    document.getElementById('btn-bad').onclick=()=>answer(false);
+    document.getElementById('btn-tts').onclick=()=>{try{const pair=currentDeck?.cards?.[queue[qPos]]; if(!pair) return; const u=new SpeechSynthesisUtterance(pair.de); u.lang='de-DE'; speechSynthesis.speak(u);}catch(e){alert('TTS niedostępne w tej przeglądarce.')}}
+
+    // === QUIZ ===
+    let quizDeck=null;
+    const qEl=document.getElementById('quiz-q'); const qa=document.getElementById('quiz-answers'); const qr=document.getElementById('quiz-result');
+    function startQuiz(id){quizDeck=decks.find(d=>d.id===id)||decks[0]; showView('quiz'); nextQ()}
+    function nextQ(){
+      const n=quizDeck.cards.length; const i=Math.floor(Math.random()*n); const word=quizDeck.cards[i];
+      qEl.textContent=`Jak będzie po niemiecku: ${word.pl}?`; const opts=new Set([word.de]);
+      while(opts.size<3){opts.add(quizDeck.cards[Math.floor(Math.random()*n)].de)}
+      const arr=shuffle([...opts]); qa.innerHTML=''; qr.textContent='';
+      arr.forEach(ans=>{const b=document.createElement('button'); b.className='btn ghost'; b.textContent=ans; b.onclick=()=>{qr.textContent=(ans===word.de?'✅ Dobrze!':'❌ Źle! Poprawna: '+word.de)}; qa.appendChild(b)})
+    }
+    document.getElementById('quiz-next').onclick=nextQ; document.getElementById('quiz-exit').onclick=()=>showView('home');
+
+    // === ADD / IMPORT / EXPORT ===
+    function populateAddSelect(){const sel=document.getElementById('add-category'); sel.innerHTML=''; decks.forEach(d=>{const o=document.createElement('option'); o.value=d.id; o.textContent=d.name; sel.appendChild(o)});}
+    document.getElementById('btn-add').onclick=()=>{
+      const sel=document.getElementById('add-category'); let cat=sel.value; const custom=document.getElementById('add-new-cat').value.trim(); if(custom){cat=slug(custom); decks.push({id:cat,name:custom,desc:'nowy zestaw',cards:[]});}
+      const deck=decks.find(d=>d.id===cat); const raw=document.getElementById('add-raw').value.trim(); if(!raw){alert('Wklej dane.');return}
+      raw.split(/\n+/).forEach(line=>{const [pl,de]=line.split(';').map(s=>s&&s.trim()); if(pl&&de) deck.cards.push({pl,de})});
+      save(LS_DECKS,decks); document.getElementById('add-raw').value=''; document.getElementById('add-new-cat').value=''; renderHome(); alert('Dodano!')
+    }
+    document.getElementById('btn-export').onclick=()=>{const blob=new Blob([JSON.stringify(decks,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=Object.assign(document.createElement('a'),{href:url,download:'bestie_decks.json'}); a.click(); URL.revokeObjectURL(url)}
+    document.getElementById('btn-import').onclick=()=>document.getElementById('file-import').click();
+    document.getElementById('file-import').addEventListener('change', e=>{const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{decks=JSON.parse(r.result); save(LS_DECKS,decks); renderHome(); alert('Zaimportowano zestawy.')}catch(err){alert('Nieprawidłowy JSON.')}}; r.readAsText(f)})
+
+    // === PROGRESS ===
+    function renderProgress(){const cnt=[0,0,0,0,0]; for(const d in progress){Object.values(progress[d]||{}).forEach(p=>cnt[p.box||0]++)} ['c0','c1','c2','c3','c4'].forEach((id,i)=>document.getElementById(id).textContent=cnt[i])}
+    document.getElementById('reset-progress').onclick=()=>{if(confirm('Na pewno zresetować postęp?')){progress={}; save(LS_PROGRESS,progress); renderProgress()}}
+
+    // === UTILS ===
+    function slug(s){return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').slice(0,40)||('k-'+Math.random().toString(36).slice(2,6))}
+    function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+    function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+
+    // Init
+    renderHome();
+  </script>
+</body>
+</html>
+
